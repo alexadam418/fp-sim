@@ -2,7 +2,7 @@
 !--------------------------------------------------------------
 !This module is to be used for simulating a fabry-perot spectrometer
 !
-!                 THE JANK IS DANK
+!             
 !         
 !               written by Alex Adam
 !---------------------------------------------------------------
@@ -138,8 +138,7 @@ module fp_sim
           do k=1,counter
              z = (k-1)*resolution + min
              spectrum(1, k) = z
-             frequency = c/z
-             spectrum(2, k) = add_noise(noise, planck_spectrum(frequency, temp))
+             spectrum(2, k) = add_noise(noise, planck_spectrum(z, temp))
           end do
           do i=1,peak_num
              call add_peaks(spectrum, peaks(i,1), peaks(i,2), peaks(i,3), counter)
@@ -147,11 +146,11 @@ module fp_sim
             
           end function create_spectrum
           
-           function planck_spectrum(f, T) result(intensity)
-               double precision, intent(in) :: f, T
+           function planck_spectrum(l, T) result(intensity)
+               double precision, intent(in) :: l, T
                double precision :: intensity
                !intensity = 2*kb*T*((f**2)/(c**2))*(((h*f)/(kb*T))/(exp((h*f)/(kb*T))-1))
-                intensity = ((2*h*f**3)/(c**2))*(1/(exp((h*f)/(kb*T))-1))
+                intensity = ((2*h*c**2)/(l**5))*(1/(exp((h*c)/(l*kb*T))-1))
            end function planck_spectrum
 
            function add_noise(noise, val) result(new_val)
@@ -237,7 +236,7 @@ module fp_sim
                   t_rt = time_round_trip(length)
                   tau = photon_decay_time(R1, R2, t_rt)
                   fwhm = lorentzian_FWHM(tau)
-                  gamma = (((1.-R1)*(1.-R2))/(1-R1*R2))*spectral_line_shape(res_freq, freq, fwhm)
+                  gamma = (((1.-R1)*(1.-R2))/(1-R1*R2))*spectral_line_shape(res_freq, freq, fwhm)/t_rt
              end function gamma_trans_prime                    
 
              function scan_cavity(spectrum_in, R1, R2, length_init, start_lamda, finish_lamda, step) result(spectrum_out)
@@ -270,7 +269,7 @@ module fp_sim
                              total_trans = total_trans + I_trans
                              I_trans = 0
                           end do
-                          spectrum_out(3,i) = total_trans * bandwidth
+                          spectrum_out(3,i) = total_trans
                      end do 
                 end function scan_cavity
                 

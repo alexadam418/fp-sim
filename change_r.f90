@@ -60,8 +60,8 @@ program change_r
                    xbl=40.,ybl=650. , clip=1, &
                    fill=ps_color([.94,.94,.94]))
      call ps_axis(1, ax='Xx', glp=0, d_tm=5., title= &
-          'Wavelength [m]')
-     call ps_axis(1, ax='Yy', title='Intensity Reduction Factor', glp=0)
+          'Reflectivity of Mirror')
+     call ps_axis(1, ax='Yy', title='% of Incident Intensity', glp=0)
      call ps_plot(1, 1000, R1, upper_out, ci=1)    
      call ps_exit    
 
